@@ -12,5 +12,12 @@ def validate_lte(testlte, lines, window):
         print(f'validation: no such file {goodpath}')
         return True, False
 
-def validate_nlte():
-    return 0
+def validate_nlte(testnlte, lines, window):
+    goodpath = f"/mnt/d/arsen/research/proj/spyquadraticstark/data/processed/spy/reference_windows/spy_{lines}_reference_15a.csv"
+    if os.path.isfile(goodpath):
+        goodlte = pd.read_csv(goodpath)
+        combined = pd.merge(testnlte, goodlte, on='filename')
+        return np.allclose(combined.radial_velocity, combined.lte_rv), True
+    else:
+        print(f'validation: no such file {goodpath}')
+        return True, False

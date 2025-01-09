@@ -9,6 +9,7 @@ matplotlib.use('Agg')
 from astropy.io import ascii
 from contextlib import contextmanager
 import sys, os
+import argparse
 
 from .utils import air2vac
 from .tests import validate_lte, validate_nlte
@@ -166,4 +167,12 @@ def ltemain(lines_to_test = ['abgd', 'ab', 'a', 'b', 'g', 'd'], lte_mask_sizes =
                         break
 
 if __name__ == "__main__":
-    ltemain()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('mode', type=str)
+    args = parser.parse_args()
+
+    assert args.mode in ['nlte', 'lte']
+    if args.mode == 'nlte':
+        nltemain()
+    elif args.mode == 'lte':
+        ltemain()
