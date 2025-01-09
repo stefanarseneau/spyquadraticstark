@@ -82,7 +82,7 @@ def suppress_stdout():
         finally:
             sys.stdout = old_stdout
 
-def postscript(e, prefix, existingdata, lines, window, verbose, validate_function)
+def postscript(e, prefix, existingdata, lines, window, verbose, validate_function):
     if e % 10 == 0:
         # save every 10 datapoints
         existingdata.to_csv(f'/mnt/d/arsen/research/proj/spyquadraticstark/data/processed/{prefix}.csv', index=False)
