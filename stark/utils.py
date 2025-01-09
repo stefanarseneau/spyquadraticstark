@@ -7,30 +7,45 @@ sys.path.append('/mnt/d/arsen/research/proj')
 from astroquery.gaia import Gaia
 import WD_models
 
+def fetch_basepath():
+    return '/mnt/d/arsen/research/proj/spyquadraticstark'
+
+def fetch_goodspypath():
+    return f'{fetch_basepath()}/data/processed/good_spy.csv'
+
+def fetch_ltepath(model, masksize, lines, window):
+    return f'{fetch_basepath()}/data/processed/lte/{model}/{masksize}angstrom/{lines}/window_{window}.csv'
+
+def fetch_nltepath(coresize, lines):
+    return f'{fetch_basepath()}/data/processed/nlte/{coresize}angstrom/{lines}.csv'
+
+
 def air2vac(wv):
     _tl=1.e4/np.array(wv)
     return (np.array(wv)*(1.+6.4328e-5+2.94981e-2/\
                           (146.-_tl**2)+2.5540e-4/(41.-_tl**2)))
 
-def read_clean_nlte(lines, size):
-    goodsystems = pd.read_csv('../data/processed/good_spy.csv').FileName.values
-    nlte = pd.read_csv(f'../data/processed/nlte/{str(size)}angstrom/{lines}.csv')
+def read_clean_nlte(coresize, lines):
+    goodsystems = pd.read_csv(fetch_goodspypath()).FileName.values
+    nlte = pd.read_csv(f'{fetch_nltepath(coresize, lines)}')
     nlte = nlte.query("nlte_logg > 7.1 and nlte_logg < 8.9 and nlte_e_rv < 10 and nlte_redchi < 10")
     return  nlte.loc[nlte['filename'].isin(goodsystems)]
 
-def read_clean_lte(lines, size, window):
-    goodsystems = pd.read_csv('../data/processed/good_spy.csv').FileName.values
+def read_clean_lte(model, masksize, lines, window):
+    goodsystems = pd.read_csv(fetch_goodspypath()).FileName.values
+    #lte = pd.read_csv(f'{fetch_ltepath(model, masksize, lines, window)}')
     lte = pd.read_csv(f'../data/processed/spy/mask_nlte_1d_h{lines}/spy_h{lines}_{window}.csv')
+    print('temporarily using the wrong lte path! remember to change this.')
     lte = lte.query("logg > 7.1 and logg < 8.9 and e_radial_velocity < 10 and redchi < 10")
     return  lte.loc[lte['filename'].isin(goodsystems)]
 
 def read_stark_effect(lteargs, nlteargs = None, sigmaclip=True):
-    nlteargs = {'lines' : 'ab', 'size' : 15} if nlteargs is None else nlteargs
+    nlteargs = {'coresize' : 15, 'lines' : 'ab'} if nlteargs is None else nlteargs
     nlte = read_clean_nlte(**nlteargs)
     lte = read_clean_lte(**lteargs)
     df = pd.merge(nlte, lte, on='filename')
     # merge in Gaia IDs
-    goodsystems = pd.read_csv('../data/processed/good_spy.csv')
+    goodsystems = pd.read_csv(fetch_goodspypath())
     df = pd.merge(goodsystems, df, left_on='FileName', right_on='filename')
     df = df.drop(columns=['FileName'])
     # compute stark velocities
