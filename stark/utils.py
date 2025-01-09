@@ -1,8 +1,10 @@
 import pandas as pd
 import numpy as np
+import pyvo
 import sys
 sys.path.append('../../')
 
+from astroquery.gaia import Gaia
 import WD_models
 
 def air2vac(wv):
@@ -42,6 +44,16 @@ def read_stark_effect(lteargs, nlteargs = None, sigmaclip=True):
         return df.query(f"abs(vstark - {mean}) < {sigma_to_clip * stddev}")
     else:
         return df
+    
+def merge_gaia(dataframe, sourcecol):
+    sources = dataframe[sourcecol].values
+    tap_service = pyvo.dal.TAPService("http://TAPVizieR.u-strasbg.fr/TAPVizieR/tap/")
+    QUERY = f"""select *
+            from \"J/MNRAS/508/3877/maincat\" as ngf
+            where ngf.GaiaEDR3 in {tuple(sources)}"""
+    gaia_data = tap_service.search(QUERY).to_table().to_pandas()
+    mergeddata = pd.merge(dataframe, gaia_data, left_on = sourcecol, right_on = 'GaiaEDR3')
+    return mergeddata
     
 ### Functions For Analyzing Data
 
@@ -84,4 +96,5 @@ def gravz_from_logg_teff(loggarray, teffarray, Hlayer = 'H'):
     radius = logg_teff_to_r(loggarray, teffarray) * radius_sun
     rv = (10**loggarray * radius) / (100 * speed_light)
     return rv*1e-3
+
         
