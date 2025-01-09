@@ -1,5 +1,9 @@
 import pandas as pd
 import numpy as np
+import sys
+sys.path.append('../../')
+
+import WD_models
 
 def air2vac(wv):
     _tl=1.e4/np.array(wv)
@@ -14,8 +18,8 @@ def read_clean_nlte(lines, size):
 
 def read_clean_lte(lines, size, window):
     goodsystems = pd.read_csv('../data/processed/good_spy.csv').FileName.values
-    lte = pd.read_csv(f'../data/processed/lte/{size}angstrom/{lines}/window_{window}.csv')
-    lte = lte.query("lte_logg > 7.1 and lte_logg < 8.9 and lte_e_rv < 10 and lte_redchi < 10")
+    lte = pd.read_csv(f'../data/processed/spy/mask_nlte_1d_h{lines}/spy_h{lines}_{window}.csv')
+    lte = lte.query("logg > 7.1 and logg < 8.9 and e_radial_velocity < 10 and redchi < 10")
     return  lte.loc[lte['filename'].isin(goodsystems)]
 
 def read_stark_effect(lteargs, nlteargs = None, sigmaclip=True):
@@ -23,9 +27,13 @@ def read_stark_effect(lteargs, nlteargs = None, sigmaclip=True):
     nlte = read_clean_nlte(**nlteargs)
     lte = read_clean_lte(**lteargs)
     df = pd.merge(nlte, lte, on='filename')
+    # merge in Gaia IDs
+    goodsystems = pd.read_csv('../data/processed/good_spy.csv')
+    df = pd.merge(goodsystems, df, left_on='FileName', right_on='filename')
+    df = df.drop(columns=['FileName'])
     # compute stark velocities
-    df['vstark'] = df['lte_rv'] - df['nlte_rv']
-    df['e_vstark'] = np.sqrt(df['lte_e_rv']**2 + df['nlte_e_rv']**2)
+    df['vstark'] = df['radial_velocity'] - df['nlte_rv']
+    df['e_vstark'] = np.sqrt(df['e_radial_velocity']**2 + df['nlte_e_rv']**2)
     # return
     if sigmaclip:
         sigma_to_clip = 3
@@ -34,4 +42,46 @@ def read_stark_effect(lteargs, nlteargs = None, sigmaclip=True):
         return df.query(f"abs(vstark - {mean}) < {sigma_to_clip * stddev}")
     else:
         return df
+    
+### Functions For Analyzing Data
+
+def bin_data(data, n):
+    quantiles = np.linspace(0, 1, n + 1)
+    bin_edges = np.quantile(data, quantiles[:-1])
+    return np.digitize(data, bin_edges)
+
+def calculate_bins(clean_df, binname, colname):
+    bin_mean, stark, err = [], [], []
+    for n in np.unique(clean_df[f"{binname}"]):
+        subset = clean_df.query(f"{binname} == {n}")
+        bin_mean.append(np.mean(subset[f"{colname}"]))
+        stark.append(np.median(subset.vstark))
+        err.append(1.2533*np.std(subset.vstark) / np.sqrt(len(subset)))
+    return bin_mean, stark, err
+
+def calculate_parameter_bins(dataframe, teffcol, loggcol, n=8):
+    # bin the data
+    dataframe['teff_bin'] = bin_data(dataframe[teffcol], n)
+    dataframe['logg_bin'] = bin_data(dataframe[loggcol], n)
+    # calculate the median parameters within bins
+    teff_mean, teff_stark, teff_err = calculate_bins(dataframe, 'teff_bin', teffcol)
+    logg_mean, logg_stark, logg_err = calculate_bins(dataframe, 'logg_bin', loggcol)
+    return (teff_mean, teff_stark, teff_err), (logg_mean, logg_stark, logg_err)
+
+def gravz_from_logg_teff(loggarray, teffarray, Hlayer = 'H'):
+    mass_sun = 1.9884e30
+    radius_sun = 6.957e8
+    newton_G = 6.674e-11
+    pc_to_m = 3.086775e16
+    speed_light = 299792458 #m/s
+
+    font_model = WD_models.load_model('f', 'f', 'f', Hlayer)
+    g_acc = (10**font_model['logg'])/100
+    rsun = np.sqrt(font_model['mass_array'] * mass_sun * newton_G / g_acc) / radius_sun
+    logg_teff_to_r = WD_models.interp_xy_z_func(x = font_model['logg'], y = 10**font_model['logteff'],\
+                                                z = rsun, interp_type = 'linear')
+    
+    radius = logg_teff_to_r(loggarray, teffarray) * radius_sun
+    rv = (10**loggarray * radius) / (100 * speed_light)
+    return rv*1e-3
         
