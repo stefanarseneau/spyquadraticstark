@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import pyvo
 import sys
-sys.path.append('../../')
+sys.path.append('/mnt/d/arsen/research/proj')
 
 from astroquery.gaia import Gaia
 import WD_models
