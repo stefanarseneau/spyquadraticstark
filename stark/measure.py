@@ -87,7 +87,7 @@ def postscript(e, path, existingdata, lines, window, verbose, validate_function)
     if e % 10 == 0:
         # save every 10 datapoints
         existingdata.to_csv(path, index=False)
-    if e % 5 == 0:
+    if e % 50 == 0:
         # validate every 50 datapoints
         validation_state, validation_succeeded, no_validated = validate_function(existingdata, lines, window)
         assert validation_state, "Validation failed!"
@@ -98,7 +98,7 @@ def nltemain(lines_to_test = ['abgd', 'ab', 'a', 'b', 'g', 'd'], nlte_core_size 
     names = pd.read_csv(f'{fetch_goodspypath()}').FileName.values
     for b, lines in enumerate(lines_to_test):
         for c, core_size in enumerate(nlte_core_size):
-            print(f'lines: {lines} ({b}/{len(lines)}) || nlte_core_size: {core_size} ({c}/{len(nlte_core_size)})')
+            print(f'lines: {lines} ({b}/{len(lines_to_test)}) || nlte_core_size: {core_size} ({c}/{len(nlte_core_size)})')
             prefix = f"nlte/{core_size}angstrom/{lines}/"
             path = fetch_nltepath(core_size, lines)
             # if available, read in existing data; otherwise create a new file
@@ -133,7 +133,7 @@ def ltemain(lines_to_test = ['abgd', 'ab', 'a', 'b', 'g', 'd'], lte_mask_sizes =
         for b, lines in enumerate(lines_to_test):
             for c, mask_size in enumerate(lte_mask_sizes):
                 for d, window in enumerate(windows):
-                    print(f'model: {model} ({a}/{len(modeltypes)}) || lines: {lines} ({b}/{len(lines)}) || lte_mask_size: {mask_size} ({c}/{len(lte_mask_sizes)}) || window: {window} ({d}/{len(windows)})')
+                    print(f'model: {model} ({a}/{len(modeltypes)}) || lines: {lines} ({b}/{len(lines_to_test)}) || lte_mask_size: {mask_size} ({c}/{len(lte_mask_sizes)}) || window: {window} ({d}/{len(windows)})')
                     prefix = f"lte/{model}/{mask_size}angstrom/{lines}/window_{window}"
                     path = fetch_ltepath(model, mask_size, lines, window)
                     # if available, read in existing data; otherwise create a new file
