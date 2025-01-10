@@ -1,23 +1,27 @@
-Could not find the pickled WD models. If you need to use these models, please re-import corv with the proper path.
-/Users/vedantchandra/0_research/01_sdss5/006_build_corv/data/comm_cat/
-star and exposure catalogs not found! check paths and run make_catalogs() if you want to use sdss functionality. otherwise ignore.
-Important:  Gaia archive will be intermittently unavailable due to scheduled maintenance on 13-01-2025 from 08:00 to 18:00 (CET)
-model: 1d_da_nlte (0/2) || lines: abgd (0/4) || lte_mask_size: 8 (0/1) || window: 9 (0/10)
-  0%|          | 0/1089 [00:00<?, ?it/s]  0%|          | 0/1089 [00:07<?, ?it/s]
 Traceback (most recent call last):
   File "<frozen runpy>", line 198, in _run_module_as_main
   File "<frozen runpy>", line 88, in _run_code
-  File "/usr3/graduate/arseneau/spyquadraticstark/stark/measure.py", line 176, in <module>
-    ltemain()
-  File "/usr3/graduate/arseneau/spyquadraticstark/stark/measure.py", line 162, in ltemain
-    postscript(e, path, existingdata, lines, window, verbose, validate_lte)
-  File "/usr3/graduate/arseneau/spyquadraticstark/stark/measure.py", line 93, in postscript
-    assert validation_state, "Validation failed!"
-           ^^^^^^^^^^^^^^^^
-AssertionError: Validation failed!
-[array([57, 61])]
-                                       filename  ...      logg
-57  WD2059p190_b_2002_09_23T01_15_39_all.dat.gz  ...  7.002137
-61  WD1932m136_a_2000_05_23T09_52_28_all.dat.gz  ...  7.000000
-
-[2 rows x 11 columns]
+  File "/usr3/graduate/arseneau/spyquadraticstark/stark/measure.py", line 1, in <module>
+    import corv
+  File "/projectnb/mesaelm/arseneau/.conda/envs/stark/lib/python3.12/site-packages/corv/__init__.py", line 9, in <module>
+    from . import models
+  File "/projectnb/mesaelm/arseneau/.conda/envs/stark/lib/python3.12/site-packages/corv/models.py", line 26, in <module>
+    from lmfit.models import Model, ConstantModel, VoigtModel
+  File "/projectnb/mesaelm/arseneau/.conda/envs/stark/lib/python3.12/site-packages/lmfit/__init__.py", line 38, in <module>
+    from .confidence import conf_interval, conf_interval2d
+  File "/projectnb/mesaelm/arseneau/.conda/envs/stark/lib/python3.12/site-packages/lmfit/confidence.py", line 10, in <module>
+    from .minimizer import MinimizerException
+  File "/projectnb/mesaelm/arseneau/.conda/envs/stark/lib/python3.12/site-packages/lmfit/minimizer.py", line 41, in <module>
+    from .parameter import Parameter, Parameters
+  File "/projectnb/mesaelm/arseneau/.conda/envs/stark/lib/python3.12/site-packages/lmfit/parameter.py", line 13, in <module>
+    from .jsonutils import decode4js, encode4js
+  File "/projectnb/mesaelm/arseneau/.conda/envs/stark/lib/python3.12/site-packages/lmfit/jsonutils.py", line 15, in <module>
+    from pandas import DataFrame, Series, read_json
+  File "/projectnb/mesaelm/arseneau/.conda/envs/stark/lib/python3.12/site-packages/pandas/__init__.py", line 14, in <module>
+    __import__(_dependency)
+  File "/projectnb/mesaelm/arseneau/.conda/envs/stark/lib/python3.12/site-packages/pytz/__init__.py", line 1114, in <module>
+    all_timezones = LazyList(
+                    ^^^^^^^^^
+  File "/projectnb/mesaelm/arseneau/.conda/envs/stark/lib/python3.12/site-packages/pytz/lazy.py", line 110, in __new__
+    setattr(LazyList, name, lazy(name))
+KeyboardInterrupt
