@@ -29,8 +29,7 @@ def read_spectrum(file, specpath = f'{fetch_basepath()}/data/raw/sp'):
     return wl, fl, ivar
 
 def get_windows(i, base_wavl):
-    steps = np.array([ 0.        ,  7.77777778, 15.55555556, 23.33333333, 31.11111111,
-                        38.88888889, 46.66666667, 54.44444444, 62.22222222, 70.        ])
+    steps = np.linspace(0, 70, 10)
     window = dict(a = 30, b = 30, g = 30, d = 30)
     window['a'] += steps[i]
     window['b'] += steps[i]
