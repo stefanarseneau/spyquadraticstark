@@ -9,11 +9,12 @@ def validate_lte(testlte, lines, window):
     if os.path.isfile(goodpath):
         goodlte = pd.read_csv(goodpath)
         combined = pd.merge(testlte, goodlte, on='filename')
-        test = np.allclose(combined.radial_velocity, combined.lte_rv), True, len(combined)
+        test = np.allclose(combined.radial_velocity, combined.lte_rv)
         if not test:
-            idx = zip(*np.where(~np.isclose(combined.radial_velocity, combined.lte_rv)))
-            print(combined.iloc[idx])
-        return test
+            idx = np.where(~np.isclose(combined.radial_velocity, combined.lte_rv))
+            print(list(idx))
+            print(combined.iloc[combined.index[idx]])
+        return test, True, len(combined)
     else:
         print(f'validation: no such file {goodpath}')
         return True, False

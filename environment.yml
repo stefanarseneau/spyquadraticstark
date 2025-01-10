@@ -174,7 +174,6 @@ dependencies:
       - attrs==24.3.0
       - blosc2==3.0.0
       - corner==2.2.3
-      - corv==2.0
       - dill==0.3.9
       - dynesty==2.1.4
       - emcee==3.1.6
@@ -209,7 +208,6 @@ dependencies:
       - nvidia-nccl-cu12==2.21.5
       - nvidia-nvjitlink-cu12==12.4.127
       - nvidia-nvtx-cu12==12.4.127
-      - payne==1.0
       - protobuf==5.29.2
       - py-cpuinfo==9.0.0
       - pygaia==3.2.2

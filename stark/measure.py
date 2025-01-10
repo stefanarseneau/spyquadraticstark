@@ -155,7 +155,7 @@ def ltemain(lines_to_test = ['abgd', 'ab', 'a', 'b', 'g', 'd'], lte_mask_sizes =
                             dat['filename'] = name
                             # combine with existing data and save everything
                             existingdata = pd.concat([existingdata, dat])
-                            ltefig.savefig(f"/mnt/d/arsen/research/proj/spyquadraticstark/figures/diagnostic/{prefix}/{name}.png")
+                            ltefig.savefig(f"/usr3/graduate/arseneau/spyquadraticstark/figures/diagnostic/{prefix}/{name}.svg")
                         except:
                             print(f"Failed to fit {name}")
                             pass
