@@ -1,0 +1,4 @@
+Could not find the pickled WD models. If you need to use these models, please re-import corv with the proper path.
+/Users/vedantchandra/0_research/01_sdss5/006_build_corv/data/comm_cat/
+star and exposure catalogs not found! check paths and run make_catalogs() if you want to use sdss functionality. otherwise ignore.
+LTE line : abgd || window : 9

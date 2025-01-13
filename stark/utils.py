@@ -9,7 +9,8 @@ from astroquery.gaia import Gaia
 import WD_models
 
 def fetch_basepath():
-    return '/mnt/d/arsen/research/proj/spyquadraticstark'
+    #return '/mnt/d/arsen/research/proj/spyquadraticstark'
+    return '/usr3/graduate/arseneau/spyquadraticstark'
 
 def fetch_goodspypath():
     return f'{fetch_basepath()}/data/processed/good_spy.csv'
