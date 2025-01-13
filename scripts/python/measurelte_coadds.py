@@ -39,17 +39,22 @@ def measure_lte(modelname, lines, win, source_ids):
             
         rv, e_rv, redchi, param_res = corv.fit.fit_corv(wavl[mask], flux[mask], ivar[mask], model)
         figure = corv.utils.lineplot(wavl[mask], flux[mask], ivar[mask], model, param_res.params)
+        figpath = f"{basepath}/figures/coadd_diagnostic/lte/{modelname}/{lines}/window_{win}"
+        if not os.path.exists(figpath):
+            os.makedirs(figpath)
         figure.savefig(f"{basepath}/figures/coadd_diagnostic/lte/{modelname}/{lines}/window_{win}/{source}.png")
 
         gooddata.loc[len(gooddata)] = {'source_id' : source, 'lte_rv' : rv, 'lte_e_rv' : e_rv, 'lte_teff' : param_res.params['teff'].value, 
                          'lte_logg' : param_res.params['logg'].value, 'lte_redchi' : param_res.redchi}
+        if not os.path.exists(os.path.dirname(ltepath)):
+            os.makedirs(os.path.dirname(ltepath))
         gooddata.to_csv(ltepath, index=False)
 
 def measure_nlte(modelname, lines, size, source_ids):
     basepath = utils.fetch_basepath()
-    ltepath = os.path.join(f"{basepath}", "data", "coadd", "nlte", f"{lines}_{size}angstrom.csv")
+    nltepath = os.path.join(f"{basepath}", "data", "coadd", "nlte", f"{lines}_{size}angstrom.csv")
     try:
-        gooddata = pd.read_csv(ltepath)
+        gooddata = pd.read_csv(nltepath)
     except:
         gooddata = pd.DataFrame(columns=['source_id', 'nlte_rv', 'nlte_e_rv', 'nlte_teff', 'nlte_logg', 'nlte_redchi'])
 
@@ -68,11 +73,16 @@ def measure_nlte(modelname, lines, size, source_ids):
             
         rv, e_rv, redchi, param_res = corv.fit.fit_corv(wavl, flux, ivar, model)
         figure = corv.utils.lineplot(wavl, flux, ivar, model, param_res.params)
-        figure.savefig(f"{basepath}/figures/coadd_diagnostic/nlte/{lines}/{size}angstrom/{source}.png")
+        figpath = f"{basepath}/figures/coadd_diagnostic/nlte/{lines}/{size}angstrom"
+        if not os.path.exists(figpath):
+            os.makedirs(figpath)
+        figure.savefig(f"{figpath}/{source}.png")
 
         gooddata.loc[len(gooddata)] = {'source_id' : source, 'lte_rv' : rv, 'lte_e_rv' : e_rv, 'lte_teff' : param_res.params['teff'].value, 
                          'lte_logg' : param_res.params['logg'].value, 'lte_redchi' : param_res.redchi}
-        gooddata.to_csv(ltepath, index=False)
+        if not os.path.exists(os.path.dirname(nltepath)):
+            os.makedirs(os.path.dirname(nltepath))
+        gooddata.to_csv(nltepath, index=False)
         
 
 if __name__ == "__main__":
