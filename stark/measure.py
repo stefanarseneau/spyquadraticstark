@@ -4,7 +4,6 @@ import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-matplotlib.use('Agg')
 
 from astropy.io import ascii
 from contextlib import contextmanager
@@ -16,7 +15,7 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 from .utils import air2vac, fetch_basepath, fetch_goodspypath, fetch_ltepath, fetch_nltepath
 from .tests import validate_lte, validate_nlte
 
-def read_spectrum(file, specpath = f'{fetch_basepath()}/data/raw/sp'):
+def read_raw_spectrum(file, specpath = f'{fetch_basepath()}/data/raw/sp'):
     # find, download, or skip the file
     path = os.path.join(specpath, file)
     table = ascii.read(path)
@@ -95,6 +94,7 @@ def postscript(e, path, existingdata, lines, window, verbose, validate_function)
     #        print(f"{e}: Validation succeeded on {no_validated} datapoints (existing measurements: {len(existingdata)}). Continuing!")
 
 def nltemain(lines_to_test = ['abgd', 'ab', 'a', 'b', 'g', 'd'], nlte_core_size = [15, 8], verbose=True):
+    matplotlib.use('Agg')
     names = pd.read_csv(f'{fetch_goodspypath()}').FileName.values
     for b, lines in enumerate(lines_to_test):
         for c, core_size in enumerate(nlte_core_size):
@@ -111,7 +111,7 @@ def nltemain(lines_to_test = ['abgd', 'ab', 'a', 'b', 'g', 'd'], nlte_core_size 
             for e, name in enumerate(tqdm(unique_names)):
                 try:
                     # read the spectrum
-                    wavl, flux, ivar = read_spectrum(name)
+                    wavl, flux, ivar = read_raw_spectrum(name)
                     with suppress_stdout():
                         # perform the measurement in lte mode
                         dat, nltefig = measure_spectrum(wavl, flux, ivar, 0, lines = lines, lte_mask_size = 8, 
@@ -128,6 +128,7 @@ def nltemain(lines_to_test = ['abgd', 'ab', 'a', 'b', 'g', 'd'], nlte_core_size 
                 postscript(e, path, existingdata, lines, 0, verbose, validate_nlte)
 
 def ltemain(lines_to_test = ['abgd', 'ab', 'a', 'b', 'g', 'd'], lte_mask_sizes = [8], modeltypes = ['1d_da_nlte', 'voigt'], windows = [9,8,7,6,5,4,3,2,1,0], verbose=True):
+    matplotlib.use('Agg')
     names = pd.read_csv(f'{fetch_goodspypath()}').FileName.values
     for a, model in enumerate(modeltypes):
         for b, lines in enumerate(lines_to_test):
@@ -146,7 +147,7 @@ def ltemain(lines_to_test = ['abgd', 'ab', 'a', 'b', 'g', 'd'], lte_mask_sizes =
                     for e, name in enumerate(tqdm(unique_names)):
                         try:
                             # read the spectrum
-                            wavl, flux, ivar = read_spectrum(name)
+                            wavl, flux, ivar = read_raw_spectrum(name)
                             with suppress_stdout():
                                 # perform the measurement in lte mode
                                 dat, ltefig = measure_spectrum(wavl, flux, ivar, window, lines = lines, lte_mask_size = mask_size, 
