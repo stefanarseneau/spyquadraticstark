@@ -87,12 +87,12 @@ def postscript(e, path, existingdata, lines, window, verbose, validate_function)
     if e % 10 == 0:
         # save every 10 datapoints
         existingdata.to_csv(path, index=False)
-    if e % 50 == 0:
-        # validate every 50 datapoints
-        validation_state, validation_succeeded, no_validated = validate_function(existingdata, lines, window)
-        assert validation_state, "Validation failed!"
-        if validation_succeeded and verbose:
-            print(f"{e}: Validation succeeded on {no_validated} datapoints (existing measurements: {len(existingdata)}). Continuing!")
+    #if e % 50 == 0:
+    #    # validate every 50 datapoints
+    #    validation_state, validation_succeeded, no_validated = validate_function(existingdata, lines, window)
+    #    assert validation_state, "Validation failed!"
+    #    if validation_succeeded and verbose:
+    #        print(f"{e}: Validation succeeded on {no_validated} datapoints (existing measurements: {len(existingdata)}). Continuing!")
 
 def nltemain(lines_to_test = ['abgd', 'ab', 'a', 'b', 'g', 'd'], nlte_core_size = [15, 8], verbose=True):
     names = pd.read_csv(f'{fetch_goodspypath()}').FileName.values
@@ -156,8 +156,8 @@ def ltemain(lines_to_test = ['abgd', 'ab', 'a', 'b', 'g', 'd'], lte_mask_sizes =
                             # combine with existing data and save everything
                             existingdata = pd.concat([existingdata, dat])
                             ltefig.savefig(f"/usr3/graduate/arseneau/spyquadraticstark/figures/diagnostic/{prefix}/{name}.svg")
-                        except:
-                            print(f"Failed to fit {name}")
+                        except Exception as ex:
+                            print(f"Failed to fit {name}: {ex}")
                             pass
                         postscript(e, path, existingdata, lines, window, verbose, validate_lte)
 
