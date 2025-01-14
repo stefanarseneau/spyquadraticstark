@@ -13,3 +13,6 @@ LTE line : abgd || window : 2
 LTE line : abgd || window : 1
 LTE line : abgd || window : 0
 LTE line : ab || window : 9
+LTE line : ab || window : 8
+LTE line : a || window : 9
+LTE line : a || window : 8
