@@ -36,19 +36,22 @@ def measure_lte(modelname, lines, win, source_ids):
         elif modelname == 'voigt':
             model = corv.models.make_balmer_model(nvoigt=1, names=lines, windows=window, 
                                                   edges={'a' : 0, 'b' : 0, 'g' : 0, 'd' : 0})
-            
-        rv, e_rv, redchi, param_res = corv.fit.fit_corv(wavl[mask], flux[mask], ivar[mask], model)
-        figure = corv.utils.lineplot(wavl[mask], flux[mask], ivar[mask], model, param_res.params)
-        figpath = f"{basepath}/figures/coadd_diagnostic/lte/{modelname}/{lines}/window_{win}"
-        if not os.path.exists(figpath):
-            os.makedirs(figpath)
-        figure.savefig(f"{basepath}/figures/coadd_diagnostic/lte/{modelname}/{lines}/window_{win}/{source}.png")
+        
+        try:
+            rv, e_rv, redchi, param_res = corv.fit.fit_corv(wavl[mask], flux[mask], ivar[mask], model)
+            figure = corv.utils.lineplot(wavl[mask], flux[mask], ivar[mask], model, param_res.params)
+            figpath = f"{basepath}/figures/coadd_diagnostic/lte/{modelname}/{lines}/window_{win}"
+            if not os.path.exists(figpath):
+                os.makedirs(figpath)
+            figure.savefig(f"{basepath}/figures/coadd_diagnostic/lte/{modelname}/{lines}/window_{win}/{source}.png")
 
-        gooddata.loc[len(gooddata)] = {'source_id' : source, 'lte_rv' : rv, 'lte_e_rv' : e_rv, 'lte_teff' : param_res.params['teff'].value, 
-                         'lte_logg' : param_res.params['logg'].value, 'lte_redchi' : param_res.redchi}
-        if not os.path.exists(os.path.dirname(ltepath)):
-            os.makedirs(os.path.dirname(ltepath))
-        gooddata.to_csv(ltepath, index=False)
+            gooddata.loc[len(gooddata)] = {'source_id' : source, 'lte_rv' : rv, 'lte_e_rv' : e_rv, 'lte_teff' : param_res.params['teff'].value, 
+                             'lte_logg' : param_res.params['logg'].value, 'lte_redchi' : param_res.redchi}
+            if not os.path.exists(os.path.dirname(ltepath)):
+                os.makedirs(os.path.dirname(ltepath))
+            gooddata.to_csv(ltepath, index=False)
+        except Exception as e:
+            print(f"{source} failed to fit: {e}")
 
 def measure_nlte(modelname, lines, size, source_ids):
     basepath = utils.fetch_basepath()
@@ -71,19 +74,21 @@ def measure_nlte(modelname, lines, size, source_ids):
             model = corv.models.make_balmer_model(nvoigt=1, names=lines, windows=window, 
                                                   edges={'a' : 0, 'b' : 0, 'g' : 0, 'd' : 0})
             
-        rv, e_rv, redchi, param_res = corv.fit.fit_corv(wavl, flux, ivar, model)
-        figure = corv.utils.lineplot(wavl, flux, ivar, model, param_res.params)
-        figpath = f"{basepath}/figures/coadd_diagnostic/nlte/{lines}/{size}angstrom"
-        if not os.path.exists(figpath):
-            os.makedirs(figpath)
-        figure.savefig(f"{figpath}/{source}.png")
+        try:
+            rv, e_rv, redchi, param_res = corv.fit.fit_corv(wavl, flux, ivar, model)
+            figure = corv.utils.lineplot(wavl, flux, ivar, model, param_res.params)
+            figpath = f"{basepath}/figures/coadd_diagnostic/nlte/{lines}/{size}angstrom"
+            if not os.path.exists(figpath):
+                os.makedirs(figpath)
+            figure.savefig(f"{figpath}/{source}.png")
 
-        gooddata.loc[len(gooddata)] = {'source_id' : source, 'lte_rv' : rv, 'lte_e_rv' : e_rv, 'lte_teff' : param_res.params['teff'].value, 
-                         'lte_logg' : param_res.params['logg'].value, 'lte_redchi' : param_res.redchi}
-        if not os.path.exists(os.path.dirname(nltepath)):
-            os.makedirs(os.path.dirname(nltepath))
-        gooddata.to_csv(nltepath, index=False)
-        
+            gooddata.loc[len(gooddata)] = {'source_id' : source, 'lte_rv' : rv, 'lte_e_rv' : e_rv, 'lte_teff' : param_res.params['teff'].value, 
+                             'lte_logg' : param_res.params['logg'].value, 'lte_redchi' : param_res.redchi}
+            if not os.path.exists(os.path.dirname(nltepath)):
+                os.makedirs(os.path.dirname(nltepath))
+            gooddata.to_csv(nltepath, index=False)
+        except Exception as e:
+            print(f"{source} failed to fit: {e}")
 
 if __name__ == "__main__":
     goodcoadds = pd.read_csv(os.path.join(f"{utils.fetch_basepath()}", "data", "goodcoadds.csv"))
