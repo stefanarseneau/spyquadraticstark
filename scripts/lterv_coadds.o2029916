@@ -21,3 +21,5 @@ LTE line : b || window : 8
 LTE line : g || window : 9
 LTE line : g || window : 8
 LTE line : d || window : 9
+LTE line : d || window : 8
+2918665577420228480 failed to fit: must be real number, not NoneType
