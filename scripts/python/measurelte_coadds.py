@@ -82,8 +82,8 @@ def measure_nlte(modelname, lines, size, source_ids):
                 os.makedirs(figpath)
             figure.savefig(f"{figpath}/{source}.png")
 
-            gooddata.loc[len(gooddata)] = {'source_id' : source, 'lte_rv' : rv, 'lte_e_rv' : e_rv, 'lte_teff' : param_res.params['teff'].value, 
-                             'lte_logg' : param_res.params['logg'].value, 'lte_redchi' : param_res.redchi}
+            gooddata.loc[len(gooddata)] = {'source_id' : source, 'nlte_rv' : rv, 'nlte_e_rv' : e_rv, 'nlte_teff' : param_res.params['teff'].value, 
+                             'nlte_logg' : param_res.params['logg'].value, 'nlte_redchi' : param_res.redchi}
             if not os.path.exists(os.path.dirname(nltepath)):
                 os.makedirs(os.path.dirname(nltepath))
             gooddata.to_csv(nltepath, index=False)
@@ -95,11 +95,11 @@ if __name__ == "__main__":
     windows = {'abgd' : [9,8,7,6,5,4,3,2,1,0], 'ab': [9,8], 'a' : [9,8],
             'b' : [9,8], 'g' : [9,8], 'd' : [9,8]}    
     
-    for line, wins in windows.items():
-        for win in wins:
-            print(f'LTE line : {line} || window : {win}')
-            measure_lte('1d_da_nlte', line, win, goodcoadds.SOURCE_ID)
-    measure_lte('voigt', 'abgd', 9, goodcoadds.SOURCE_ID)
+    #for line, wins in windows.items():
+    #    for win in wins:
+    #        print(f'LTE line : {line} || window : {win}')
+    #        measure_lte('1d_da_nlte', line, win, goodcoadds.SOURCE_ID)
+    #measure_lte('voigt', 'abgd', 9, goodcoadds.SOURCE_ID)
 
     sizes = {'ab' : [15, 8], 'abgd' : [15, 8], 'a' : [15, 8], 'b' : [15, 8], 'g' : [15, 8], 'd' : [15, 8]}
     for line, sis in sizes.items():

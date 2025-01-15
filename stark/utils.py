@@ -15,7 +15,7 @@ def fetch_basepath():
 def fetch_goodspypath():
     return f'{fetch_basepath()}/data/processed/good_spy.csv'
 
-def fetch_ltepath(model, masksize, lines, window):
+def fetch_ltepath(model, lines, window):
     return f'{fetch_basepath()}/data/coadd/lte/{model}/{lines}/window_{window}.csv'
 
 def fetch_nltepath(coresize, lines):
