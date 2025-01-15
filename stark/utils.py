@@ -9,17 +9,17 @@ from astroquery.gaia import Gaia
 import WD_models
 
 def fetch_basepath():
-    #return '/mnt/d/arsen/research/proj/spyquadraticstark'
-    return '/usr3/graduate/arseneau/spyquadraticstark'
+    return '/mnt/d/arsen/research/proj/spyquadraticstark'
+    #return '/usr3/graduate/arseneau/spyquadraticstark'
 
 def fetch_goodspypath():
     return f'{fetch_basepath()}/data/processed/good_spy.csv'
 
 def fetch_ltepath(model, masksize, lines, window):
-    return f'{fetch_basepath()}/data/processed/lte/{model}/{masksize}angstrom/{lines}/window_{window}.csv'
+    return f'{fetch_basepath()}/data/coadd/lte/{model}/{lines}/window_{window}.csv'
 
 def fetch_nltepath(coresize, lines):
-    return f'{fetch_basepath()}/data/processed/nlte/{coresize}angstrom/{lines}.csv'
+    return f'{fetch_basepath()}/data/coadd/nlte/{lines}_{coresize}angstrom.csv'
 
 
 def air2vac(wv):
