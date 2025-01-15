@@ -18,3 +18,6 @@ LTE line : a || window : 8
 4964509614631078272 failed to fit: must be real number, not NoneType
 LTE line : b || window : 9
 LTE line : b || window : 8
+LTE line : g || window : 9
+LTE line : g || window : 8
+LTE line : d || window : 9
