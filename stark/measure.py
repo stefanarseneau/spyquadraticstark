@@ -27,6 +27,19 @@ def read_raw_spectrum(file, specpath = f'{fetch_basepath()}/data/raw/sp'):
     ivar =  snr**2 / (table[':'].data + 1e-6)**2
     return wl, fl, ivar
 
+def read_raw_spectrum_nocorrect(file, specpath = f'{fetch_basepath()}/data/raw/sp'):
+    # find, download, or skip the file
+    path = os.path.join(specpath, file)
+    table = ascii.read(path)
+    wl = table['Table'].data
+    fl = table[':'].data
+    mask = (5260 < wl) * (wl < 5280) # continuum region
+    snr = np.nanmean(fl[mask]) / np.nanstd(fl[mask])
+    snr = snr if ~np.isnan(snr) else 1
+    ivar =  snr**2 / (table[':'].data + 1e-6)**2
+    return wl, fl, ivar
+
+
 def get_windows(i, base_wavl):
     steps = np.linspace(0, 70, 10)
     window = dict(a = 30, b = 30, g = 30, d = 30)

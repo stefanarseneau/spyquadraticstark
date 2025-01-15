@@ -101,7 +101,7 @@ if __name__ == "__main__":
     #        measure_lte('1d_da_nlte', line, win, goodcoadds.SOURCE_ID)
     #measure_lte('voigt', 'abgd', 9, goodcoadds.SOURCE_ID)
 
-    sizes = {'ab' : [15, 8], 'abgd' : [15, 8], 'a' : [15, 8], 'b' : [15, 8], 'g' : [15, 8], 'd' : [15, 8]}
+    sizes = {'ab' : [15, 8]}#, 'abgd' : [15, 8], 'a' : [15, 8], 'b' : [15, 8], 'g' : [15, 8], 'd' : [15, 8]}
     for line, sis in sizes.items():
         for si in sis:
             print(f'NLTE line : {line} || size : {si} angstrom')

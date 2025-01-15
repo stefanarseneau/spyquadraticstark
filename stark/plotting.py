@@ -39,11 +39,12 @@ def parameter_stark_plot(allstark, paramdata, plot_zzceti = True,
     ax.axhline(y=0, c='k', ls = '--')
     ax.set_ylabel(r'$v_{Stark}$ $[km/s]$')
     ax.set_xlabel(x_label)
+    y_min, y_max = ax.get_ylim()
     if plot_zzceti:
-        y_min, y_max = ax.get_ylim()
         ax.fill_betweenx([y_min, y_max], 10500, 12500, color="red", alpha=0.5, zorder=0, label='ZZ Ceti Instability\nStrip (Approx)')
     ax.legend(**legend_kwargs)
     ax.set_ylim(y_min,y_max)
     ax.set_xlim(xlims[0], xlims[1])
     ax.set_ylim(ylims[0], ylims[1])
     return fig, ax
+
