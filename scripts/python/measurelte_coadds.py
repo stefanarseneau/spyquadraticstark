@@ -108,7 +108,7 @@ def measure_nlte(modelname, lines, size, source_ids):
                                                   edges={'a' : 0, 'b' : 0, 'g' : 0, 'd' : 0})
             try:
                 rv, e_rv, redchi, param_res = corv.fit.fit_corv(wavl, flux, ivar, model)
-                figure = corv.utils.lineplot(wavl, flux, ivar, model, param_res.params)
+                figure = corv.utils.lineplot(wavl, flux, ivar, model, param_res.params, printparams=False)
                 figpath = f"{basepath}/figures/coadd_diagnostic/nlte/voigt/{lines}/{size}angstrom"
                 if not os.path.exists(figpath):
                     os.makedirs(figpath)
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     #    for win in wins:
     #        print(f'LTE line : {line} || window : {win}')
     #        measure_lte('1d_da_nlte', line, win, goodcoadds.SOURCE_ID)
-    measure_lte('voigt', 'abgd', 9, goodcoadds.SOURCE_ID)
+    #measure_lte('voigt', 'abgd', 9, goodcoadds.SOURCE_ID)
 
     #sizes = {'ab' : [15, 8]}#, 'abgd' : [15, 8], 'a' : [15, 8], 'b' : [15, 8], 'g' : [15, 8], 'd' : [15, 8]}
     #for line, sis in sizes.items():
