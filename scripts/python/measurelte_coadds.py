@@ -104,7 +104,7 @@ def measure_nlte(modelname, lines, size, source_ids):
                 print(f"{source} failed to fit: {e}")
 
         elif modelname == 'voigt':
-            model = corv.models.make_balmer_model(nvoigt=1, names=lines, windows=window, 
+            model = corv.models.make_balmer_model(nvoigt=2, names=lines, windows=window, 
                                                   edges={'a' : 0, 'b' : 0, 'g' : 0, 'd' : 0})
             try:
                 rv, e_rv, redchi, param_res = corv.fit.fit_corv(wavl, flux, ivar, model)
