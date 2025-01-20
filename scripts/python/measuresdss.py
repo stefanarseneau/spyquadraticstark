@@ -4,13 +4,45 @@ from tqdm import tqdm
 import corv
 import sys
 import os
+import matplotlib.pyplot as plt
 sys.path.append('/mnt/d/arsen/research/proj/spyquadraticstark')
 sys.path.append('/usr3/graduate/arseneau/spyquadraticstark')
 
+from astroquery.sdss import SDSS
+from astropy.io import fits
 from stark import sdss, utils, measure
 
+class SDSSHandler:
+    def __init__(self, table, source_key, sdss5_path):
+        self.table = table
+        self.source_key = source_key
+        self.filenames = self.table.wd_source_id
+
+        self.sdss5_path = sdss5_path
+        self.specfinder = {'sdss4' : self.fetch_sdss4, 'sdss5' : self.fetch_sdss5}
+
+    def fetch_sdss4(self, row):
+        plate = row.wd_plate
+        mjd = row.wd_mjd
+        fiberid = row.wd_fiberid
+        spec = SDSS.get_spectra(plate=plate, mjd=mjd, fiberID=fiberid)[0]
+
+        wavl = 10**spec[1].data['LOGLAM']
+        flux = spec[1].data['FLUX']
+        ivar = spec[1].data['IVAR']
+        return wavl, flux, ivar
+    
+    def fetch_sdss5(self, row):
+        filepath = os.path.join(self.sdss5_path, row.paths)
+        spec = fits.open(filepath)
+
+        wavl = 10**spec[1].data['LOGLAM']
+        flux = spec[1].data['FLUX']
+        ivar = spec[1].data['IVAR']
+        return wavl, flux, ivar
+
 def measurerv(modelname, lines, win, table):
-    sp = sdss.SDSSHandler(table, 'wd_rv_from', f'{utils.fetch_basepath()}/data/raw/sdss5')
+    sp = SDSSHandler(table, 'wd_rv_from', f'{utils.fetch_basepath()}/data/raw/')
     basepath = utils.fetch_basepath()
     filepath = os.path.join(f"{basepath}", "data", "sdss", f"{modelname}", f"{lines}", f"window_{win}.csv")
     try:
@@ -34,19 +66,32 @@ def measurerv(modelname, lines, win, table):
             
         try:
             rv, e_rv, redchi, param_res = corv.fit.fit_corv(wavl, flux, ivar, model)
-            figure = corv.utils.lineplot(wavl, flux, ivar, model, param_res.params)
+            try:
+                figure = corv.utils.lineplot(wavl, flux, ivar, model, param_res.params)
+            except:
+                figure = corv.utils.lineplot(wavl, flux, ivar, model, param_res.params, printparams=False)
             figpath = f"{basepath}/figures/coadd_diagnostic/sdss/{modelname}/{lines}/window_{win}"
             if not os.path.exists(figpath):
                 os.makedirs(figpath)
             figure.savefig(f"{basepath}/figures/coadd_diagnostic/sdss/{modelname}/{lines}/window_{win}/{row.wd_source_id}.png")
+            plt.close()
 
-            gooddata.loc[len(gooddata)] = {'source_id' : row.wd_source_id, 'lte_rv' : rv, 'lte_e_rv' : e_rv, 'lte_teff' : param_res.params['teff'].value, 
-                             'lte_logg' : param_res.params['logg'].value, 'lte_redchi' : param_res.redchi}
+            gooddata.loc[len(gooddata)] = {'wd_source_id' : row.wd_source_id, 'wd_rv' : rv, 'wd_e_rv' : e_rv, 'wd_teff' : param_res.params['teff'].value, 
+                             'wd_logg' : param_res.params['logg'].value, 'wd_redchi' : param_res.redchi}
             if not os.path.exists(os.path.dirname(filepath)):
                 os.makedirs(os.path.dirname(filepath))
             gooddata.to_csv(filepath, index=False)
         except Exception as e:
             print(f"{row.wd_source_id} failed to fit: {e}")
+            fig,ax = plt.subplots(ncols=1)
+            ax.plot(wavl, flux)
+            ax.set_title(f"Gaia DR3 {row.wd_source_id}")
+            ax.set_xlabel('Wavelength [A]')
+            ax.set_ylabel('Flux [erg/cm^2/s/A]')
+            failpath = f"{basepath}/figures/coadd_diagnostic/sdss/failed/{modelname}/{lines}/window_{win}/{row.wd_source_id}.png"
+            if not os.path.exists(os.path.dirname(failpath)):
+                os.makedirs(os.path.dirname(failpath))
+            fig.savefig(failpath)
         
 
 if __name__ == "__main__":
