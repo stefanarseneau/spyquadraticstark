@@ -51,7 +51,7 @@ def measure_lte(modelname, lines, win, source_ids):
 
         
         elif modelname == 'voigt':
-            model = corv.models.make_balmer_model(nvoigt=1, names=lines, windows=window, 
+            model = corv.models.make_balmer_model(nvoigt=2, names=lines, windows=window,
                                                   edges={'a' : 0, 'b' : 0, 'g' : 0, 'd' : 0})
         
             try:
@@ -139,3 +139,5 @@ if __name__ == "__main__":
     #        print(f'NLTE line : {line} || size : {si} angstrom')
     #        measure_nlte('1d_da_nlte', line, si, goodcoadds.SOURCE_ID)
     measure_nlte('voigt', 'ab', 15, goodcoadds.SOURCE_ID)
+    for win in windows['abgd']:
+        measure_lte('voigt', 'abgd', win, goodcoadds.SOURCE_ID)
