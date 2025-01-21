@@ -25,7 +25,7 @@ def read_raw_spectrum(file, specpath = f'{fetch_basepath()}/data/raw/sp'):
     snr = np.nanmean(fl[mask]) / np.nanstd(fl[mask])
     snr = snr if ~np.isnan(snr) else 1
     ivar =  snr**2 / (table[':'].data + 1e-6)**2
-    return wl, fl, ivar
+    return wl, fl, ivar, table
 
 def read_raw_spectrum_nocorrect(file, specpath = f'{fetch_basepath()}/data/raw/sp'):
     # find, download, or skip the file

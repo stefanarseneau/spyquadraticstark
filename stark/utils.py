@@ -2,15 +2,16 @@ import pandas as pd
 import numpy as np
 import pyvo
 import sys
-sys.path.append('/mnt/d/arsen/research/proj')
-sys.path.append('/usr3/graduate/arseneau')
+import os
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
 
 from astroquery.gaia import Gaia
 import WD_models
 
 def fetch_basepath():
-    #return '/mnt/d/arsen/research/proj/spyquadraticstark'
-    return '/usr3/graduate/arseneau/spyquadraticstark'
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
+    #return '/usr3/graduate/arseneau/spyquadraticstark'
 
 def fetch_goodspypath():
     return f'{fetch_basepath()}/data/goodcoadds.csv'
