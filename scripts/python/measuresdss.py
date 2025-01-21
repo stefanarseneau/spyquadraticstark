@@ -5,12 +5,20 @@ import corv
 import sys
 import os
 import matplotlib.pyplot as plt
-sys.path.append('/mnt/d/arsen/research/proj/spyquadraticstark')
-sys.path.append('/usr3/graduate/arseneau/spyquadraticstark')
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
+plt.style.use(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'stark', 'stefan.mplstyle'))
 
 from astroquery.sdss import SDSS
 from astropy.io import fits
-from stark import sdss, utils, measure
+
+def get_windows(i, base_wavl):
+    steps = np.linspace(0, 70, 10)
+    window = dict(a = 30, b = 30, g = 30, d = 30)
+    window['a'] += steps[i]
+    window['b'] += steps[i]
+    window['g'] += steps[i] * 0.786
+    window['d'] += steps[i] * 0.643
+    return window
 
 class SDSSHandler:
     def __init__(self, table, source_key, sdss5_path):
@@ -42,9 +50,11 @@ class SDSSHandler:
         return wavl, flux, ivar
 
 def measurerv(modelname, lines, win, table):
-    sp = SDSSHandler(table, 'wd_rv_from', f'{utils.fetch_basepath()}/data/raw/')
-    basepath = utils.fetch_basepath()
-    filepath = os.path.join(f"{basepath}", "data", "sdss", f"{modelname}", f"{lines}", f"window_{win}.csv")
+    basepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')
+    filepath = os.path.join(f"{basepath}", "data", "sdss5", f"{modelname}", f"{lines}_window_{win}.csv")
+    figpath = os.path.join(f"{basepath}", "figures", "diagnostic", "sdss", modelname, f"{lines}_window_{win}")
+    sp = SDSSHandler(table, 'wd_rv_from', f'{basepath}/data/raw/')
+    
     try:
         gooddata = pd.read_csv(filepath)
     except:
@@ -55,47 +65,40 @@ def measurerv(modelname, lines, win, table):
 
     for i, row in tqdm(subset.iterrows(), total=subset.shape[0]):
         wavl, flux, ivar = sp.specfinder[row.wd_rv_from](row)
-        window = measure.get_windows(win, wavl)
+        window = get_windows(win, wavl)
 
         if modelname == '1d_da_nlte':
             model = corv.models.WarwickDAModel(model_name='1d_da_nlte', names=lines, resolution=1, windows=window, 
                                                edges={'a' : 0, 'b' : 0, 'g' : 0, 'd' : 0}).model
         elif modelname == 'voigt':
-            model = corv.models.make_balmer_model(nvoigt=1, names=lines, windows=window, 
+            model = corv.models.make_balmer_model(nvoigt=2, names=lines, windows=window, 
                                                   edges={'a' : 0, 'b' : 0, 'g' : 0, 'd' : 0})
             
         try:
             rv, e_rv, redchi, param_res = corv.fit.fit_corv(wavl, flux, ivar, model)
-            try:
-                figure = corv.utils.lineplot(wavl, flux, ivar, model, param_res.params)
-            except:
-                figure = corv.utils.lineplot(wavl, flux, ivar, model, param_res.params, printparams=False)
-            figpath = f"{basepath}/figures/coadd_diagnostic/sdss/{modelname}/{lines}/window_{win}"
+            figure = corv.utils.lineplot(wavl, flux, ivar, model, param_res.params, printparams=False)
             if not os.path.exists(figpath):
                 os.makedirs(figpath)
-            figure.savefig(f"{basepath}/figures/coadd_diagnostic/sdss/{modelname}/{lines}/window_{win}/{row.wd_source_id}.png")
-            plt.close()
+            figure.savefig(f"{figpath}/{row.wd_source_id}.png")
 
-            gooddata.loc[len(gooddata)] = {'wd_source_id' : row.wd_source_id, 'wd_rv' : rv, 'wd_e_rv' : e_rv, 'wd_teff' : param_res.params['teff'].value, 
-                             'wd_logg' : param_res.params['logg'].value, 'wd_redchi' : param_res.redchi}
+            if modelname == '1d_da_nlte':
+                gooddata.loc[len(gooddata)] = {'wd_source_id' : row.wd_source_id, 'wd_rv' : rv, 'wd_e_rv' : e_rv, 'wd_teff' : param_res.params['teff'].value, 
+                                'wd_logg' : param_res.params['logg'].value, 'wd_redchi' : param_res.redchi}
+            elif modelname == 'voigt':
+                gooddata.loc[len(gooddata)] = {'wd_source_id' : row.wd_source_id, 'wd_rv' : rv, 'wd_e_rv' : e_rv, 'wd_teff' : np.nan, 
+                                'wd_logg' : np.nan, 'wd_redchi' : param_res.redchi}
+                
             if not os.path.exists(os.path.dirname(filepath)):
                 os.makedirs(os.path.dirname(filepath))
             gooddata.to_csv(filepath, index=False)
+
         except Exception as e:
             print(f"{row.wd_source_id} failed to fit: {e}")
-            fig,ax = plt.subplots(ncols=1)
-            ax.plot(wavl, flux)
-            ax.set_title(f"Gaia DR3 {row.wd_source_id}")
-            ax.set_xlabel('Wavelength [A]')
-            ax.set_ylabel('Flux [erg/cm^2/s/A]')
-            failpath = f"{basepath}/figures/coadd_diagnostic/sdss/failed/{modelname}/{lines}/window_{win}/{row.wd_source_id}.png"
-            if not os.path.exists(os.path.dirname(failpath)):
-                os.makedirs(os.path.dirname(failpath))
-            fig.savefig(failpath)
         
 
 if __name__ == "__main__":
-    sdssids = pd.read_csv(f'{utils.fetch_basepath()}/data/raw/sdss_commonpm.csv').query("snr > 15 & R_chance_align < 0.1")
+    basepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')
+    sdssids = pd.read_csv(f'{basepath}/data/raw/sdss_commonpm.csv').query("snr > 15 & R_chance_align < 0.1")
     windows = {'abgd' : [9,8,7,6,5,4,3,2,1,0], 'ab': [9,8], 'a' : [9,8],
             'b' : [9,8], 'g' : [9,8], 'd' : [9,8]}    
     
