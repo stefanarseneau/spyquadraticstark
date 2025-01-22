@@ -1,0 +1,8 @@
+Could not find the pickled WD models. If you need to use these models, please re-import corv with the proper path.
+/Users/vedantchandra/0_research/01_sdss5/006_build_corv/data/comm_cat/
+star and exposure catalogs not found! check paths and run make_catalogs() if you want to use sdss functionality. otherwise ignore.
+LTE line : abgd || window : 9
+he2159-1649_2451891_52478743019 failed to fit: expected non-empty vector for x
+wd0050-332_2452163_65698164981 failed to fit: expected non-empty vector for x
+he2356-4513_2452163_6230390002 failed to fit: expected non-empty vector for x
+wd2312-356_2452163_66659044987 failed to fit: expected non-empty vector for x

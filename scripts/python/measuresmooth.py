@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 from Payne.utils import smoothing
 import corv
 
+import matplotlib
+matplotlib.use('Agg')
+
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
 plt.style.use(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'stark', 'stefan.mplstyle'))
 
@@ -81,6 +84,7 @@ def measure_lte(modelname, lines, win, source_ids, smooth=True):
             if not os.path.exists(figpath):
                 os.makedirs(figpath)
             figure.savefig(f"{figpath}/{source}.png")
+            plt.close()
 
             if modelname == '1d_da_nlte': 
                 gooddata.loc[len(gooddata)] = {'obsname' : source, 'lte_rv' : rv, 'lte_e_rv' : e_rv, 'lte_teff' : param_res.params['teff'].value, 
@@ -106,6 +110,7 @@ def measure_nlte(modelname, lines, size, source_ids):
 
     remaining = list(set(source_ids) - set(gooddata.obsname))
     for source in tqdm(remaining):
+        print(source)
         spec = read_nlte_spectrum(source)
         wavl, flux, ivar = spec.wavl, spec.flux, spec.ivar
         window = {'a' : size, 'b' : size, 'g' : size, 'd' : size}
@@ -123,6 +128,7 @@ def measure_nlte(modelname, lines, size, source_ids):
             if not os.path.exists(figpath):
                 os.makedirs(figpath)
             figure.savefig(f"{figpath}/{source}.png")
+            plt.close()
 
             if modelname == '1d_da_nlte': 
                 gooddata.loc[len(gooddata)] = {'obsname' : source, 'nlte_rv' : rv, 'nlte_e_rv' : e_rv, 'nlte_teff' : param_res.params['teff'].value, 
