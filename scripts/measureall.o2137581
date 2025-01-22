@@ -1,0 +1,34 @@
+Could not find the pickled WD models. If you need to use these models, please re-import corv with the proper path.
+/Users/vedantchandra/0_research/01_sdss5/006_build_corv/data/comm_cat/
+star and exposure catalogs not found! check paths and run make_catalogs() if you want to use sdss functionality. otherwise ignore.
+LTE line : abgd || window : 9
+he0219m4049_b_2452165_85925929016 failed to fit: expected non-empty vector for x
+wd0050-332_2452163_65698164981 failed to fit: expected non-empty vector for x
+wd0242-174_2452272_62741978001 failed to fit: NaN values detected in your input data or the output of your objective/model function - fitting algorithms cannot handle this! Please read https://lmfit.github.io/lmfit-py/faq.html#i-get-errors-from-nan-in-my-fit-what-can-i-do for more information.
+wd2312-356_2452165_52264577989 failed to fit: expected non-empty vector for x
+he2356-4513_2452163_6230390002 failed to fit: expected non-empty vector for x
+he0409-5154_2452165_8946386301 failed to fit: expected non-empty vector for x
+he2159-1649_2451891_52478743019 failed to fit: expected non-empty vector for x
+he0138-4014_2452532_72595294984 failed to fit: NaN values detected in your input data or the output of your objective/model function - fitting algorithms cannot handle this! Please read https://lmfit.github.io/lmfit-py/faq.html#i-get-errors-from-nan-in-my-fit-what-can-i-do for more information.
+wd2312-356_2452163_66659044987 failed to fit: expected non-empty vector for x
+LTE line : abgd || window : 8
+he0219m4049_b_2452165_85925929016 failed to fit: expected non-empty vector for x
+wd0050-332_2452163_65698164981 failed to fit: expected non-empty vector for x
+he0138-4014_2452532_72595294984 failed to fit: NaN values detected in your input data or the output of your objective/model function - fitting algorithms cannot handle this! Please read https://lmfit.github.io/lmfit-py/faq.html#i-get-errors-from-nan-in-my-fit-what-can-i-do for more information.
+he2159-1649_2451891_52478743019 failed to fit: expected non-empty vector for x
+he2356-4513_2452163_6230390002 failed to fit: expected non-empty vector for x
+wd0242-174_2452272_62741978001 failed to fit: NaN values detected in your input data or the output of your objective/model function - fitting algorithms cannot handle this! Please read https://lmfit.github.io/lmfit-py/faq.html#i-get-errors-from-nan-in-my-fit-what-can-i-do for more information.
+he0409-5154_2452165_8946386301 failed to fit: expected non-empty vector for x
+wd2312-356_2452163_66659044987 failed to fit: expected non-empty vector for x
+wd2312-356_2452165_52264577989 failed to fit: expected non-empty vector for x
+LTE line : abgd || window : 7
+he0219m4049_b_2452165_85925929016 failed to fit: expected non-empty vector for x
+wd0050-332_2452163_65698164981 failed to fit: expected non-empty vector for x
+he0138-4014_2452532_72595294984 failed to fit: NaN values detected in your input data or the output of your objective/model function - fitting algorithms cannot handle this! Please read https://lmfit.github.io/lmfit-py/faq.html#i-get-errors-from-nan-in-my-fit-what-can-i-do for more information.
+he2159-1649_2451891_52478743019 failed to fit: expected non-empty vector for x
+he2356-4513_2452163_6230390002 failed to fit: expected non-empty vector for x
+wd0242-174_2452272_62741978001 failed to fit: NaN values detected in your input data or the output of your objective/model function - fitting algorithms cannot handle this! Please read https://lmfit.github.io/lmfit-py/faq.html#i-get-errors-from-nan-in-my-fit-what-can-i-do for more information.
+he0409-5154_2452165_8946386301 failed to fit: expected non-empty vector for x
+wd2312-356_2452163_66659044987 failed to fit: expected non-empty vector for x
+wd2312-356_2452165_52264577989 failed to fit: expected non-empty vector for x
+LTE line : abgd || window : 6
